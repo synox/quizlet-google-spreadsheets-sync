@@ -103,7 +103,9 @@ The script keeps track of which spreadsheet tabs created each quizlet study set 
 Not all edge cases are handled, but this means you add new tabs at any time, rename them, etc., and existing sets will be updated accordingly.
 
 ## TODO
-* Support multiple tabs. 
+* Support multiple tabs.
+* Possible to run this as an [Google Apps Script](https://developers.google.com/apps-script/) within a Spreadsheet to update sets automatically?
+ 
 
 ## Maintainers
 - [Aravindo Wingeier](https://github.com/synox)
