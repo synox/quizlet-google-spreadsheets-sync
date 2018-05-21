@@ -1,5 +1,5 @@
 <p align="center">
-	<img src="media/sync.png" width="300">
+	<img src="media/sync.png" width="500">
 	<br>
 	<br>
 </p>
