@@ -1,3 +1,12 @@
+<p align="center">
+	<img src="media/sync.png" width="300">
+	<br>
+	<br>
+</p>
+
+> Sync google spreadsheets to quizlet
+
+
 # Sync words from a google spreadsheet to Quizlet
 This script synchronized a sheet from Google Spreadsheets to Quizlet. 
 
@@ -7,7 +16,6 @@ It requires developer accounts of google and quizlet api. Then you have to autho
 
 Two columns of each spreadsheet are used as "term" and "definition" in Quizlet. 
 
-![Sync spreadsheets to quizlet](sync.png)
 
 # Setup developer accounts
 
