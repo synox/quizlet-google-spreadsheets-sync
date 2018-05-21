@@ -6,22 +6,18 @@
 
 > Sync google spreadsheets to quizlet
 
+## Summary
 
-# Sync words from a google spreadsheet to Quizlet
-This script synchronized a sheet from Google Spreadsheets to Quizlet. 
+- Edit wordlists in google spreadsheets and sync with quizlet.
+- Uses the Google and Quizlet APIs, developer accounts required. 
+- Uses two columns of a Google spreadsheets to fill the Quizlet term and definition.
+ 
 
-While Quizlet has easy ways to import vocabulary from a sources like spreadsheets and CSV files, there is no simple way to continually update sets from an external data source like a Google Sheet. This script lets you keep using Sheets as the primary mechanism for editing and adding to your sets.
-
-It requires developer accounts of google and quizlet api. Then you have to authorizing with your user accounts as well. 
-
-Two columns of each spreadsheet are used as "term" and "definition" in Quizlet. 
-
-
-# Setup developer accounts
+## Setup developer accounts
 
 Developer accounts of Google and Quizlet are required.   
 
-## Enable Google API
+### Enable Google API
 
 Create a developer account at https://developers.google.com. 
 
@@ -44,7 +40,7 @@ npm install
 node google-auth.js
 ```
 
-## Enable Quizlet API
+### Enable Quizlet API
 
 Log in to your Quizlet account and go to the [Developer Dashboard](https://quizlet.com/api-dashboard).
 
@@ -68,7 +64,7 @@ curl https://api.quizlet.com/oauth/token \
 
 You should receive a JSON object with an `access_token=***`. Save that as `quizlet_client_secret.json` in your working directory. 
 
-## Running
+## Installation
 
 For a given Google Spreadsheet, grab it's ID from the URL. The ID is the part of the URL between `d/` and `/edit`: `https://docs.google.com/spreadsheets/d/******/edit`
 
@@ -96,17 +92,16 @@ Config options:
  * "quizlet_lang_definitions": Language of the definitions. See the [list of possible languages](https://quizlet.com/api/2.0/docs/languages).
  * "quizlet_set_id": Id of the Quizlet set. (Is automatically added by the script.) 
 
-Then run the script: 
+## Running
 
 ```bash
 node index.js
 ```
 
-When it's done, go back to Quizlet and you should see the new study set in your spreadsheet.
+When it's done, go back to Quizlet and you should see the new study set.
 
 
-
-### What it's doing
+## What it's doing
 
 The script keeps track of which spreadsheet tabs created each quizlet study set by writing the quizlet set id to `config.json`. This maps each Google Spreadsheet tab ID to the Quizlet set ID.
 
