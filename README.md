@@ -1,4 +1,4 @@
-# Google Sheets to Quizlet Sync
+# Sync words from a google spreadsheet to Quizlet
 This script synchronized a sheet from Google Spreadsheets to Quizlet. 
 
 While Quizlet has easy ways to import vocabulary from a sources like spreadsheets and CSV files, there is no simple way to continually update sets from an external data source like a Google Sheet. This script lets you keep using Sheets as the primary mechanism for editing and adding to your sets.
@@ -6,6 +6,8 @@ While Quizlet has easy ways to import vocabulary from a sources like spreadsheet
 It requires developer accounts of google and quizlet api. Then you have to authorizing with your user accounts as well. 
 
 Two columns of each spreadsheet are used as "term" and "definition" in Quizlet. 
+
+![Sync spreadsheets to quizlet](sync.png)
 
 # Setup developer accounts
 
