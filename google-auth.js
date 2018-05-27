@@ -14,13 +14,22 @@ const SCOPES = [
 ];
 const TOKEN_PATH = 'google_credentials.json';
 
-// Load client secrets from a local file.
-fs.readFile('google_client_secret.json', (err, content) => {
-    if (err) return console.log('Error loading client secret file:', err);
-    // Authorize a client with credentials, then call the Google Drive API.
-    let credentials = JSON.parse(content);
-    authorize(credentials, listFiles);
-});
+
+async function login() {
+    return new Promise(function (resolve, reject) {
+        // Load client secrets from a local file.
+        fs.readFile('google_client_secret.json', (err, content) => {
+            if (err) return console.log('Error loading client secret file:', err);
+            // Authorize a client with credentials, then call the Google Drive API.
+            let credentials = JSON.parse(content);
+
+            authorize(credentials, oAuth2Client => {
+                resolve(oAuth2Client);
+            });
+        });
+
+    });
+}
 
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
@@ -94,3 +103,8 @@ function listFiles(auth) {
         }
     });
 }
+
+// login().then(auth => console.log(auth))
+
+
+module.exports = login;
