@@ -1,20 +1,14 @@
 #!/usr/local/bin/node
 'use strict';
 
-const {google} = require('googleapis');
+const google_login = require('./google-auth');
 const fs = require('fs');
 const request = require('request-promise-native');
-
+const GoogleSheetsHelper = require('./sheets_helper');
 let config = JSON.parse(fs.readFileSync('config.json'));
-const sheet_id = config.sheet_id;
-if (!sheet_id) {
-    console.log('Please provide a sheet_id in config.json');
-    process.exit(1);
-}
-
-const googleClientSecret = JSON.parse(fs.readFileSync('google_client_secret.json')).installed;
-if (!googleClientSecret.client_id || !googleClientSecret.client_secret) {
-    console.log('Please check credentials in google_client_secret.json');
+const sheets_document_id = config.sheet_id;
+if (!sheets_document_id) {
+    console.log('Please provide a sheets_document_id in config.json');
     process.exit(1);
 }
 
@@ -24,23 +18,6 @@ if (!quizletCredentials.access_token) {
     process.exit(1);
 }
 
-
-// Authorize google client library
-const authClient = new google.auth.OAuth2(googleClientSecret.client_id, quizletCredentials.access_token);
-authClient.credentials = JSON.parse(fs.readFileSync('google_credentials.json'));
-google.options({auth: authClient});
-const sheets = google.sheets('v4');
-
-async function quizlet_get_setinfo(quizlet_set_id) {
-    let httpResponse = await request.get({
-        url: `https://api.quizlet.com/2.0/sets/${quizlet_set_id}`,
-        headers: {
-            Authorization: `Bearer ${quizletCredentials.access_token}`,
-            'Content-Type': 'application/javascript'
-        }
-    });
-    return JSON.parse(httpResponse);
-}
 
 async function quizlet_update_set(quizlet_set_name, set_data) {
     let httpResponseJson = await request.put({
@@ -99,25 +76,12 @@ async function updateSet(quizlet_set_id, quizlet_set_name, data) {
 }
 
 
-async function getWordlistFromSheet(sheet) {
-    const tab_id = sheet.properties.sheetId;
-    const tab_name = sheet.properties.title;
-
-    let range = `${tab_name}!${config.columns}`;
-    console.log('fetching', range);
-    const tableDataResponse = await sheets.spreadsheets.values.get({
-        spreadsheetId: sheet_id,
-        range: range
-    });
-
-    const rows = tableDataResponse.data.values || [];
-
+function mapWordList(rows) {
     if (config.skip_first_row) {
         rows.shift();
     }
 
-    return rows
-        .filter(row => row[0] && row[1])
+    return rows.filter(row => row[0] && row[1])
         .map(row => {
             return {
                 term: row[0],
@@ -127,17 +91,15 @@ async function getWordlistFromSheet(sheet) {
         });
 }
 
-async function copySheetToQuizlet(sheet, quizlet_set_id) {
-    const wordList = await getWordlistFromSheet(sheet);
-
-    const tab_name = sheet.properties.title;
-    const quizlet_set_name = config.prefix + tab_name;
-
-    let new_quizlet_set_id = updateSet(quizlet_set_id, quizlet_set_name, {
+async function copySheetToQuizlet(mySheets, sheet, quizlet_set_id) {
+    const rows = await mySheets.getValues(sheets_document_id, sheet, config.columns);
+    let wordList = mapWordList(rows);
+    const quizlet_set_name = config.prefix + sheet.properties.title;
+    let new_quizlet_set_id = await updateSet(quizlet_set_id, quizlet_set_name, {
         definitions: wordList.map(i => i.definition),
         terms: wordList.map(i => i.term),
     });
-    return await new_quizlet_set_id;
+    return new_quizlet_set_id;
 }
 
 async function updateQuizletSetMetadata(sheet_id, quizlet_set_id) {
@@ -146,14 +108,17 @@ async function updateQuizletSetMetadata(sheet_id, quizlet_set_id) {
     fs.writeFileSync('config.json', JSON.stringify(config, null, 4));
 }
 
+
 async function main() {
     try {
-        let response = await sheets.spreadsheets.get({spreadsheetId: sheet_id});
-        let sheetsList = response.data.sheets;
+        let auth = await google_login();
+        let mySheets = new GoogleSheetsHelper(auth);
+
+        let sheetsList = await mySheets.getTabs(sheets_document_id);
         // TODO: run all sheets
         const firstSheet = sheetsList[0];
-        const new_quizlet_set_id = await copySheetToQuizlet(firstSheet, config["quizlet_set_id"]);
-        await updateQuizletSetMetadata(sheet_id, new_quizlet_set_id);
+        const new_quizlet_set_id = await copySheetToQuizlet(mySheets, firstSheet, config["quizlet_set_id"]);
+        await updateQuizletSetMetadata(sheets_document_id, new_quizlet_set_id);
         console.log(`done`);
     } catch
         (reason) {
