@@ -33,12 +33,7 @@ Create a developer account at https://developers.google.com.
 
 > (copied and adjusted from https://developers.google.com/drive/api/v3/quickstart/nodejs)
 
-Then run the following script and follow the instructions to authorize your account. The script will write out `google_credentials.json` to your directory.
-
-```bash
-npm install
-node google-auth.js
-```
+On the first execution of `index.js` the account will be authorized. The script will write out `google_credentials.json` to your directory.
 
 ### Enable Quizlet API
 
@@ -94,7 +89,9 @@ Config options:
 
 ## Running
 
+
 ```bash
+npm install
 node index.js
 ```
 
@@ -108,7 +105,6 @@ The script keeps track of which spreadsheet tabs created each quizlet study set 
 Not all edge cases are handled, but this means you add new tabs at any time, rename them, etc., and existing sets will be updated accordingly.
 
 ## TODO
-* combine google-auth.js in index.js. Maybe with automatic auth browser like https://rclone.org/drive/ (Port 53682)
 * Support multiple tabs.
 * Possible to run this as an [Google Apps Script](https://developers.google.com/apps-script/) within a Spreadsheet to update sets automatically?
  
