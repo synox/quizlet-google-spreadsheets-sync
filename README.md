@@ -108,6 +108,7 @@ The script keeps track of which spreadsheet tabs created each quizlet study set 
 Not all edge cases are handled, but this means you add new tabs at any time, rename them, etc., and existing sets will be updated accordingly.
 
 ## TODO
+* combine google-auth.js in index.js. Maybe with automatic auth browser like https://rclone.org/drive/ (Port 53682)
 * Support multiple tabs.
 * Possible to run this as an [Google Apps Script](https://developers.google.com/apps-script/) within a Spreadsheet to update sets automatically?
  
