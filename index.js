@@ -14,6 +14,10 @@ const config = new Config('config.json');
 async function copySheetToQuizlet(sheet, quizlet_set_id, sheetsClient) {
     const rows = await sheetsClient.getRows(config.getSheetsDocumentId(), sheet, config.getColumns());
     let wordList = mapWordList(rows);
+    if (wordList.length < 3) {
+        throw Error(`wordList must have at least 3 elements. Rows: ${rows}`);
+    }
+
     let newData = {
         definitions: wordList.map(i => i.definition),
         terms: wordList.map(i => i.term),
